@@ -1,22 +1,88 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import Header from './Header.js';
+import Footer from './Footer.js';
+import HeroSection from '../components/HeroSection.js';
+
 
 export default function Home() {
-  const formRef = useRef(null);
+  const navigate = useNavigate();
+  const formContainerRef = useRef();
+  const formRef = useRef();
 
-  const scrollToForm = () => {
-    if (formRef.current) {
-      formRef.current.scrollIntoView({ behavior: 'smooth' });
+  const [props, setPosts]=useState([
+    {id: 1, title: 'Замок', body: 'Он находиться на юге Эстонии. И я вляется одим из самых красивых'},
+    {id: 1, title: 'Замок', body: 'Он находиться на юге Эстонии. И я вляется одим из самых красивых'},
+    {id: 1, title: 'Замок', body: 'Он находиться на юге Эстонии. И я вляется одим из самых красивых'},
+  ])
+
+  
+
+   const scrollToForm = () => {
+    if (formContainerRef.current) {
+      formContainerRef.current.scrollIntoView({ behavior: 'smooth' });
     }
+   };
+
+   const handleSubmit = (e) => {
+    e.preventDefault();
+
+        if (!formRef.current) return;
+
+    const formData = new FormData(formRef.current);
+    const query = new URLSearchParams(formData).toString();
+
+    navigate(`/result?${query}`);
+};
+
+const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3,
+        },
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 2,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+        },
+      },
+    ],
   };
+
+  const cards = [
+    { title: 'Таллинн', img: 'https://res.cloudinary.com/djcyhbk2e/image/upload/c_scale,f_auto,q_35,w_1400/v1/gvv/prod/pfdstycd0y9eerxqwztm' },
+    { title: 'Пярну', img: 'https://sobory.ru/pic/13150/13196_20150722_031052.jpg' },
+    { title: 'Сааремаа', img: 'https://th.bing.com/th/id/R.a46080dedfd11259b2f101db03938a8a?rik=PS6hatTowTtb%2fg&pid=ImgRaw&r=0' },
+    { title: 'Тарту', img: 'https://paesibaltici.org/wp-content/uploads/2019/10/tartu-estonia-cosa-vedere-1600x1066.jpg' },
+    { title: 'Хийумаа', img: 'https://fs.tonkosti.ru/43/8b/438bpj2zjj6so888skcos84wc.jpg' },
+  ];
 
   return (
     <>
+    <Header />
+    {/* <HeroSection /> */}
       <div
         style={{
           position: 'relative',
-          height: 300,
-          fontWeight: 600,
-          backgroundColor: 'blue',
+          height: 400,
+          fontWeight: 500,
         }}
       >
         <img
@@ -24,7 +90,7 @@ export default function Home() {
           alt="main"
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
-        <nav>{/* Навигация */}</nav>
+      
 
         <h1
           style={{
@@ -62,19 +128,54 @@ export default function Home() {
             right: 30,
             padding: '10px 20px',
             fontWeight: 'bold',
-            backgroundColor: 'white',
+            backgroundColor: 'blue',
             border: 'none',
             borderRadius: '5px',
             cursor: 'pointer',
+            color:'white',
           }}
         >
           Выбрать поездку
         </button>
       </div>
-
-      {/* Центрирование формы */}
+<div style={{ padding: '40px 20px', backgroundColor: '#f5f5f5' }}>
+        <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>
+          Популярные направления
+        </h2>
+        <Slider {...sliderSettings}>
+  {cards.map((card, index) => (
+    <div key={index} style={{ padding: 15 }}> {/* ← отступ между карточками */}
       <div
-        ref={formRef}
+        style={{
+          backgroundColor: 'white',
+          borderRadius: 8,
+          overflow: 'hidden',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+        }}
+      >
+        <img
+          src={card.img}
+          alt={card.title}
+          style={{
+            width: '100%',
+            height: 150,
+            objectFit: 'cover',
+          }}
+        />
+        <div style={{ padding: '10px', textAlign: 'center' }}>
+          <h3 style={{ margin: 0 }}>{card.title}</h3>
+        </div>
+      </div>
+    </div>
+  ))}
+</Slider>
+      </div>
+   
+      <div
+        ref={formContainerRef}
         style={{
           display: 'flex',
           justifyContent: 'center',
@@ -82,7 +183,9 @@ export default function Home() {
           padding: '40px 20px',
         }}
       >
-        <form
+        <form 
+          ref={formRef}
+          onSubmit={handleSubmit}
           style={{
             border: '1px solid black',
             padding: 20,
@@ -91,7 +194,11 @@ export default function Home() {
             width: '100%',
           }}
         >
-          <h2>Выбрать поездку</h2>
+          <h2 style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',}}
+          >Выбрать поездку</h2>
 
           <label htmlFor="destination" style={{ fontSize: 13 }}>
             Направление:
@@ -108,7 +215,7 @@ export default function Home() {
               border: '1px solid #ccc',
             }}
           >
-            <option value="">Выберите направление</option>
+        
             <option value="tallinn">Таллинн</option>
             <option value="estonia">Эстония</option>
             <option value="tartumaa">Тарту</option>
@@ -236,6 +343,8 @@ export default function Home() {
           
         </form>
       </div>
+       <Footer />
     </>
+     
   );
-}
+} 
