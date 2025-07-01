@@ -1,15 +1,33 @@
-import React from 'react';
-import { DiVim } from 'react-icons/di';
+import React, { useState } from 'react';
 import AdminForm from '../components/AdminForm';
-import ArticleList from '../components/ArticleList';
-
 
 export default function Admin() {
-  return 
-  <div>
-    <AdminForm/>
-    
-    <hr/>
-    <ArticleList/>
-  </div>
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await fetch('http://localhost:5000/api/articles', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title, content }),
+      });
+
+      setTitle('');
+      setContent('');
+      alert('Статья добавлена!');
+    } catch (err) {
+      alert('Ошибка при добавлении статьи');
+    }
+  };
+
+  return (
+    <div>
+      <AdminForm/>
+       
+    </div>
+  );
 }
